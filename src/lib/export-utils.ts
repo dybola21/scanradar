@@ -1,39 +1,40 @@
-import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
 import { LeadRecord } from "./schemas";
 
 export const exportToCSV = (leads: LeadRecord[], filename: string) => {
-  const headers = ["Nome", "Telefone", "Bairro", "Cidade", "UF", "Website", "E-mail", "E-mail2"];
-  const rows = leads.map((l) => [
-    l.nome || "",
-    l.telefone || "",
-    l.bairro || "",
-    l.cidade || "",
-    l.uf || "",
-    l.website || "",
-    l.email || "",
-    l.email2 || "",
+  const headers = ["Nome", "Telefone", "E-mail", "E-mail 2", "Website", "Bairro", "Cidade", "UF"];
+  const rows = leads.map(lead => [
+    lead.nome || "",
+    lead.telefone || "",
+    lead.email || "",
+    lead.email2 || "",
+    lead.website || "",
+    lead.bairro || "",
+    lead.cidade || "",
+    lead.uf || ""
   ]);
 
-  const csvContent = [headers, ...rows]
-    .map((e) => e.map(String).join(","))
-    .join("\n");
+  const csvContent = [
+    headers.join(","),
+    ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+  ].join("\n");
 
-  // Add BOM for UTF-8 correctly in Excel
+  // UTF-8 BOM for Excel compatibility
   const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-  saveAs(blob, `${filename}.csv`);
+  saveAs(blob, filename);
 };
 
 export const exportToExcel = (leads: LeadRecord[], filename: string) => {
-  const data = leads.map((l) => ({
-    Nome: l.nome || "",
-    Telefone: l.telefone || "",
-    Bairro: l.bairro || "",
-    Cidade: l.cidade || "",
-    UF: l.uf || "",
-    Website: l.website || "",
-    "E-mail": l.email || "",
-    "E-mail2": l.email2 || "",
+  const data = leads.map(lead => ({
+    "Nome": lead.nome || "",
+    "Telefone": lead.telefone || "",
+    "E-mail": lead.email || "",
+    "E-mail 2": lead.email2 || "",
+    "Website": lead.website || "",
+    "Bairro": lead.bairro || "",
+    "Cidade": lead.cidade || "",
+    "UF": lead.uf || ""
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(data);
@@ -42,5 +43,5 @@ export const exportToExcel = (leads: LeadRecord[], filename: string) => {
   
   const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
   const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-  saveAs(blob, `${filename}.xlsx`);
+  saveAs(blob, filename);
 };
