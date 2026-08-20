@@ -33,7 +33,7 @@ export default function Settings() {
   }, [settings]);
 
   const updateMutation = useMutation({
-    mutationFn: (data: { webhook_url: string; webhook_secret?: string; integration_name: string }) => 
+    mutationFn: (data: { webhook_url: string; webhook_secret?: string | null; integration_name: string }) => 
       updateSettingsFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["n8n-settings"] });
