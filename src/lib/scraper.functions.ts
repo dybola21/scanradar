@@ -177,14 +177,14 @@ export const startSearch = createServerFn({ method: "POST" })
       if (validated.resultado.leads.length > 0) {
         const leadsToInsert = validated.resultado.leads.map((l) => ({
           search_id: searchRecord.id,
-          nome: l.Nome,
-          telefone: l.Telefone,
-          bairro: l.Bairro,
-          cidade: l.Cidade,
-          uf: l.UF,
-          website: l.Website,
-          email: l["E-mail"],
-          email2: l["E-mail2"],
+          nome: l.Nome ?? null,
+          telefone: l.Telefone ?? null,
+          bairro: l.Bairro ?? null,
+          cidade: l.Cidade ?? null,
+          uf: l.UF ?? null,
+          website: l.Website ?? null,
+          email: l["E-mail"] ?? null,
+          email2: l["E-mail2"] ?? null,
         }));
 
         await supabase.from("leads").insert(leadsToInsert);
@@ -196,8 +196,8 @@ export const startSearch = createServerFn({ method: "POST" })
         .update({
           status: "completed",
           total_leads: validated.resultado.totalLeads,
-          sheet_name: validated.googleSheet?.name,
-          sheet_url: validated.googleSheet?.url,
+          sheet_name: validated.googleSheet?.name ?? null,
+          sheet_url: validated.googleSheet?.url ?? null,
           completed_at: new Date().toISOString(),
         })
         .eq("id", searchRecord.id);
@@ -265,29 +265,12 @@ export const getDashboardStats = createServerFn({ method: "GET" })
 
     const { data: searches } = await supabase
       .from("searches")
-      .select("total_leads, status")
+      .select("id, total_leads, status")
       .eq("user_id", userId);
 
-    const { data: leads } = await supabase
-      .from("leads")
-      .select("email, website")
-      .innerJoin("searches", "leads.search_id", "searches.id")
-      .eq("searches.user_id", userId);
-
-    // Note: Supabase JS client doesn't support complex joins well in one call without extra config
-    // Let's simplify and get counts
-    
     const totalSearches = searches?.length || 0;
     const totalLeads = searches?.reduce((acc, s) => acc + (s.total_leads || 0), 0) || 0;
     
-    const { count: leadsWithEmail } = await supabase
-      .from("leads")
-      .select("*", { count: "exact", head: true })
-      .not("email", "is", null)
-      .not("email", "eq", "")
-      .innerJoin("searches", "search_id", "id") // This might fail without explicit join handling
-      
-    // Better way: get all search IDs for user first
     const searchIds = searches?.map(s => s.id) || [];
     
     if (searchIds.length === 0) {
