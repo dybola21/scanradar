@@ -48,7 +48,7 @@ export default function Settings() {
     e.preventDefault();
     updateMutation.mutate({ 
       webhook_url: webhookUrl, 
-      webhook_secret: webhookSecret || undefined, 
+      webhook_secret: webhookSecret || null, 
       integration_name: integrationName || "n8n integration" 
     });
   };

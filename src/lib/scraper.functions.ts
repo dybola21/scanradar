@@ -28,7 +28,7 @@ export const updateIntegrationSettings = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
       webhook_url: z.string().url("URL inválida"),
-      webhook_secret: z.string().optional(),
+      webhook_secret: z.string().optional().nullable(),
       integration_name: z.string().min(1),
     })
   )
