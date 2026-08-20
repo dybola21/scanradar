@@ -17,6 +17,7 @@ import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated.search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings'
 import { Route as AuthenticatedResultsSearchIdRouteImport } from './routes/_authenticated.results.$searchId'
+import { Route as ApiPublicHooksScheduledTaskRouteImport } from './routes/api.public.hooks.scheduled-task'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,12 @@ const AuthenticatedResultsSearchIdRoute =
     path: '/results/$searchId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const ApiPublicHooksScheduledTaskRoute =
+  ApiPublicHooksScheduledTaskRouteImport.update({
+    id: '/api/public/hooks/scheduled-task',
+    path: '/api/public/hooks/scheduled-task',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/results/$searchId': typeof AuthenticatedResultsSearchIdRoute
+  '/api/public/hooks/scheduled-task': typeof ApiPublicHooksScheduledTaskRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,6 +84,7 @@ export interface FileRoutesByTo {
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/results/$searchId': typeof AuthenticatedResultsSearchIdRoute
+  '/api/public/hooks/scheduled-task': typeof ApiPublicHooksScheduledTaskRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,6 +96,7 @@ export interface FileRoutesById {
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/results/$searchId': typeof AuthenticatedResultsSearchIdRoute
+  '/api/public/hooks/scheduled-task': typeof ApiPublicHooksScheduledTaskRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/results/$searchId'
+    | '/api/public/hooks/scheduled-task'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/results/$searchId'
+    | '/api/public/hooks/scheduled-task'
   id:
     | '__root__'
     | '/'
@@ -117,12 +129,14 @@ export interface FileRouteTypes {
     | '/_authenticated/search'
     | '/_authenticated/settings'
     | '/_authenticated/results/$searchId'
+    | '/api/public/hooks/scheduled-task'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicHooksScheduledTaskRoute: typeof ApiPublicHooksScheduledTaskRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -183,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedResultsSearchIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/hooks/scheduled-task': {
+      id: '/api/public/hooks/scheduled-task'
+      path: '/api/public/hooks/scheduled-task'
+      fullPath: '/api/public/hooks/scheduled-task'
+      preLoaderRoute: typeof ApiPublicHooksScheduledTaskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -210,6 +231,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicHooksScheduledTaskRoute: ApiPublicHooksScheduledTaskRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

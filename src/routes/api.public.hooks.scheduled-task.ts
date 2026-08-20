@@ -5,19 +5,19 @@ export const Route = createFileRoute('/api/public/hooks/scheduled-task')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authHeader = request.headers.get('authorization')
-        const token = authHeader?.replace('Bearer ', '')
+        const authHeader = request.headers.get('apikey')
+        const token = authHeader
 
         if (!token) {
           return new Response(
-            JSON.stringify({ error: 'Missing authorization header' }),
+            JSON.stringify({ error: 'Missing apikey header' }),
             { status: 401, headers: { 'Content-Type': 'application/json' } }
           )
         }
 
         const supabase = createClient(
-          import.meta.env['VITE_SUPABASE_URL']!,
-          token!,
+          process.env['VITE_SUPABASE_URL']!,
+          token,
           {
             auth: {
               autoRefreshToken: false,
