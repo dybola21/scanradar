@@ -17,7 +17,7 @@ import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated.search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings'
 import { Route as AuthenticatedResultsSearchIdRouteImport } from './routes/_authenticated.results.$searchId'
-import { Route as ApiPublicHooksScheduledTaskRouteImport } from './routes/api/public/hooks/scheduled-task'
+import { Route as ApiPublicHooksScheduledTaskRouteImport } from './routes/api.public.hooks.scheduled-task'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
