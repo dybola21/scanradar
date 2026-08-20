@@ -1,9 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/results/$searchId")({
-  component: ResultsPage,
+  component: () => <div>Results</div>,
 });
-
-function ResultsPage() {
-  return null; // Will implement soon
-}

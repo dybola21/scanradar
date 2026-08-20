@@ -1,9 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/settings")({
-  component: SettingsPage,
+  component: () => <div>Settings</div>,
 });
-
-function SettingsPage() {
-  return null; // Will implement soon
-}
