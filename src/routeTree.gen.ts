@@ -16,7 +16,6 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated.history'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated.search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings'
-import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated.results.'
 import { Route as AuthenticatedResultsSearchIdRouteImport } from './routes/_authenticated.results.$searchId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,11 +52,6 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
-  id: '/results/',
-  path: '/results/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedResultsSearchIdRoute =
   AuthenticatedResultsSearchIdRouteImport.update({
     id: '/results/$searchId',
@@ -72,7 +66,6 @@ export interface FileRoutesByFullPath {
   '/history': typeof AuthenticatedHistoryRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/results/': typeof AuthenticatedResultsRoute
   '/results/$searchId': typeof AuthenticatedResultsSearchIdRoute
 }
 export interface FileRoutesByTo {
@@ -82,7 +75,6 @@ export interface FileRoutesByTo {
   '/history': typeof AuthenticatedHistoryRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/results': typeof AuthenticatedResultsRoute
   '/results/$searchId': typeof AuthenticatedResultsSearchIdRoute
 }
 export interface FileRoutesById {
@@ -94,7 +86,6 @@ export interface FileRoutesById {
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/results/': typeof AuthenticatedResultsRoute
   '/_authenticated/results/$searchId': typeof AuthenticatedResultsSearchIdRoute
 }
 export interface FileRouteTypes {
@@ -106,7 +97,6 @@ export interface FileRouteTypes {
     | '/history'
     | '/search'
     | '/settings'
-    | '/results/'
     | '/results/$searchId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -116,7 +106,6 @@ export interface FileRouteTypes {
     | '/history'
     | '/search'
     | '/settings'
-    | '/results'
     | '/results/$searchId'
   id:
     | '__root__'
@@ -127,7 +116,6 @@ export interface FileRouteTypes {
     | '/_authenticated/history'
     | '/_authenticated/search'
     | '/_authenticated/settings'
-    | '/_authenticated/results/'
     | '/_authenticated/results/$searchId'
   fileRoutesById: FileRoutesById
 }
@@ -188,13 +176,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/results/': {
-      id: '/_authenticated/results/'
-      path: '/results'
-      fullPath: '/results/'
-      preLoaderRoute: typeof AuthenticatedResultsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/results/$searchId': {
       id: '/_authenticated/results/$searchId'
       path: '/results/$searchId'
@@ -210,7 +191,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
   AuthenticatedResultsSearchIdRoute: typeof AuthenticatedResultsSearchIdRoute
 }
 
@@ -219,7 +199,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedResultsRoute: AuthenticatedResultsRoute,
   AuthenticatedResultsSearchIdRoute: AuthenticatedResultsSearchIdRoute,
 }
 
