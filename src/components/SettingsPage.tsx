@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { getIntegrationSettings, updateIntegrationSettings, testIntegration } from "@/lib/scraper.functions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Shield, Settings2, CheckCircle2, XCircle } from "lucide-react";
+import { Shield, Settings2 } from "lucide-react";
 
 export default function Settings() {
   const queryClient = useQueryClient();
@@ -21,18 +21,19 @@ export default function Settings() {
 
   const [webhookUrl, setWebhookUrl] = useState("");
   const [webhookSecret, setWebhookSecret] = useState("");
+  const [integrationName, setIntegrationName] = useState("");
   const [isTesting, setIsTesting] = useState(false);
 
-  // Sync local state when settings load
-  useState(() => {
+  useEffect(() => {
     if (settings) {
       setWebhookUrl(settings.webhook_url);
-      setWebhookSecret(settings.webhook_secret);
+      setWebhookSecret(""); // Don't show the dummy dots when editing
+      setIntegrationName(settings.integration_name);
     }
-  });
+  }, [settings]);
 
   const updateMutation = useMutation({
-    mutationFn: (data: { webhook_url: string; webhook_secret: string }) => 
+    mutationFn: (data: { webhook_url: string; webhook_secret?: string; integration_name: string }) => 
       updateSettingsFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["n8n-settings"] });
@@ -45,7 +46,11 @@ export default function Settings() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate({ webhook_url: webhookUrl, webhook_secret: webhookSecret });
+    updateMutation.mutate({ 
+      webhook_url: webhookUrl, 
+      webhook_secret: webhookSecret || undefined, 
+      integration_name: integrationName || "n8n integration" 
+    });
   };
 
   const handleTest = async () => {
@@ -86,6 +91,15 @@ export default function Settings() {
         <CardContent>
           <form onSubmit={handleSave} className="space-y-4">
             <div className="space-y-2">
+              <label className="text-sm font-medium">Nome da Integração</label>
+              <Input
+                placeholder="Ex: n8n Produção"
+                value={integrationName}
+                onChange={(e) => setIntegrationName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
               <label className="text-sm font-medium">URL do Webhook</label>
               <Input
                 placeholder="https://n8n.exemplo.com/webhook/..."
@@ -98,10 +112,9 @@ export default function Settings() {
               <label className="text-sm font-medium">Segredo do Webhook (X-Webhook-Secret)</label>
               <Input
                 type="password"
-                placeholder="Insira o segredo para autenticação"
+                placeholder={settings?.webhook_secret ? "••••••••••••••••" : "Insira o segredo para autenticação"}
                 value={webhookSecret}
                 onChange={(e) => setWebhookSecret(e.target.value)}
-                required
               />
             </div>
             <div className="flex gap-4">

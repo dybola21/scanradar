@@ -265,16 +265,29 @@ export const getDashboardStats = createServerFn({ method: "GET" })
 
     const { data: searches } = await supabase
       .from("searches")
-      .select("id, total_leads, status")
+      .select("id, total_leads, status, created_at")
       .eq("user_id", userId);
 
     const totalSearches = searches?.length || 0;
     const totalLeads = searches?.reduce((acc, s) => acc + (s.total_leads || 0), 0) || 0;
     
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    
+    const searchesToday = searches?.filter(s => s.created_at >= startOfToday).length || 0;
+    const leadsToday = searches?.filter(s => s.created_at >= startOfToday).reduce((acc, s) => acc + (s.total_leads || 0), 0) || 0;
+
     const searchIds = searches?.map(s => s.id) || [];
     
     if (searchIds.length === 0) {
-      return { totalSearches: 0, totalLeads: 0, leadsWithEmail: 0, leadsWithWebsite: 0 };
+      return { 
+        totalSearches: 0, 
+        totalLeads: 0, 
+        leadsWithEmail: 0, 
+        leadsWithWebsite: 0,
+        searchesToday: 0,
+        leadsToday: 0
+      };
     }
 
     const { count: emailCount } = await supabase
@@ -294,5 +307,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       totalLeads,
       leadsWithEmail: emailCount || 0,
       leadsWithWebsite: websiteCount || 0,
+      searchesToday,
+      leadsToday
     };
   });
