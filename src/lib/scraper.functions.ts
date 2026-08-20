@@ -177,12 +177,12 @@ export const startSearch = createServerFn({ method: "POST" })
       if (validated.resultado.leads.length > 0) {
         const leadsToInsert = validated.resultado.leads.map((l) => ({
           search_id: searchRecord.id,
-          nome: l.Nome ?? null,
-          telefone: l.Telefone ?? null,
-          bairro: l.Bairro ?? null,
-          cidade: l.Cidade ?? null,
-          uf: l.UF ?? null,
-          website: l.Website ?? null,
+          nome: l['Nome'] ?? null,
+          telefone: l['Telefone'] ?? null,
+          bairro: l['Bairro'] ?? null,
+          cidade: l['Cidade'] ?? null,
+          uf: l['UF'] ?? null,
+          website: l['Website'] ?? null,
           email: l["E-mail"] ?? null,
           email2: l["E-mail2"] ?? null,
         }));
