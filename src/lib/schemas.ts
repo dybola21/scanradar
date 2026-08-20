@@ -1,103 +1,53 @@
 import { z } from "zod";
 
-export const states = [
-  { value: "AC", label: "Acre" },
-  { value: "AL", label: "Alagoas" },
-  { value: "AP", label: "Amapá" },
-  { value: "AM", label: "Amazonas" },
-  { value: "BA", label: "Bahia" },
-  { value: "CE", label: "Ceará" },
-  { value: "DF", label: "Distrito Federal" },
-  { value: "ES", label: "Espírito Santo" },
-  { value: "GO", label: "Goiás" },
-  { value: "MA", label: "Maranhão" },
-  { value: "MT", label: "Mato Grosso" },
-  { value: "MS", label: "Mato Grosso do Sul" },
-  { value: "MG", label: "Minas Gerais" },
-  { value: "PA", label: "Pará" },
-  { value: "PB", label: "Paraíba" },
-  { value: "PR", label: "Paraná" },
-  { value: "PE", label: "Pernambuco" },
-  { value: "PI", label: "Piauí" },
-  { value: "RJ", label: "Rio de Janeiro" },
-  { value: "RN", label: "Rio Grande do Norte" },
-  { value: "RS", label: "Rio Grande do Sul" },
-  { value: "RO", label: "Rondônia" },
-  { value: "RR", label: "Roraima" },
-  { value: "SC", label: "Santa Catarina" },
-  { value: "SP", label: "São Paulo" },
-  { value: "SE", label: "Sergipe" },
-  { value: "TO", label: "Tocantins" },
-];
-
 export const leadSchema = z.object({
-  Nome: z.string().optional(),
-  Telefone: z.string().optional(),
-  Bairro: z.string().optional(),
-  Cidade: z.string().optional(),
-  UF: z.string().optional(),
-  Website: z.string().optional(),
-  "E-mail": z.string().optional(),
-  "E-mail2": z.string().optional(),
-});
-
-export const scraperResponseSchema = z.object({
-  success: z.boolean(),
-  requestId: z.string(),
-  pesquisa: z.object({
-    termo: z.string(),
-    cidade: z.string(),
-    uf: z.string(),
-  }),
-  resultado: z.object({
-    aba: z.string().optional(),
-    totalLeads: z.number(),
-    leads: z.array(leadSchema),
-  }),
-  googleSheet: z.object({
-    name: z.string().optional(),
-    url: z.string().optional(),
-  }).optional(),
+  id: z.string(),
+  search_id: z.string(),
+  nome: z.string().nullable(),
+  telefone: z.string().nullable(),
+  bairro: z.string().nullable(),
+  cidade: z.string().nullable(),
+  uf: z.string().nullable(),
+  website: z.string().nullable(),
+  email: z.string().nullable(),
+  email2: z.string().nullable(),
+  created_at: z.string(),
 });
 
 export const searchSchema = z.object({
-  termo: z.string().min(1, "Termo é obrigatório").trim(),
-  cidade: z.string().min(1, "Cidade é obrigatória").trim(),
-  uf: z.string().length(2, "UF inválida"),
+  termo: z.string().min(1, "Termo é obrigatório"),
+  cidade: z.string().min(1, "Cidade é obrigatória"),
+  uf: z.string().length(2, "UF deve ter 2 caracteres"),
 });
 
-export type Lead = z.infer<typeof leadSchema>;
-export type ScraperResponse = z.infer<typeof scraperResponseSchema>;
+export const searchRecordSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  request_id: z.string(),
+  termo: z.string(),
+  cidade: z.string(),
+  uf: z.string(),
+  status: z.enum(["pending", "processing", "completed", "failed"]),
+  total_leads: z.number().nullable(),
+  sheet_name: z.string().nullable(),
+  sheet_url: z.string().nullable(),
+  error_message: z.string().nullable(),
+  created_at: z.string(),
+  completed_at: z.string().nullable(),
+});
+
+// For n8n response validation
+export const scraperResponseSchema = z.object({
+  resultado: z.object({
+    totalLeads: z.number(),
+    leads: z.array(z.record(z.any())),
+  }),
+  googleSheet: z.object({
+    name: z.string(),
+    url: z.string().url(),
+  }).optional(),
+});
+
+export type LeadRecord = z.infer<typeof leadSchema>;
+export type SearchRecord = z.infer<typeof searchRecordSchema>;
 export type SearchInput = z.infer<typeof searchSchema>;
-
-export type SearchStatus = "pending" | "processing" | "completed" | "failed";
-
-export interface SearchRecord {
-  id: string;
-  user_id: string;
-  request_id: string;
-  termo: string;
-  cidade: string;
-  uf: string;
-  sheet_name?: string;
-  sheet_url?: string;
-  status: SearchStatus;
-  total_leads: number;
-  error_message?: string;
-  created_at: string;
-  completed_at?: string;
-}
-
-export interface LeadRecord {
-  id: string;
-  search_id: string;
-  nome?: string;
-  telefone?: string;
-  bairro?: string;
-  cidade?: string;
-  uf?: string;
-  website?: string;
-  email?: string;
-  email2?: string;
-  created_at: string;
-}
