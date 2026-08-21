@@ -88,7 +88,11 @@ export default function DashboardLayout() {
       {/* Desktop Sidebar */}
       <aside className="hidden w-72 border-r border-border/40 bg-card/30 backdrop-blur-xl md:block fixed h-full z-20">
         <div className="flex h-20 items-center px-8">
-          <Link to="/dashboard" className="flex items-center gap-3">
+          <Link 
+            to="/dashboard" 
+            className="flex items-center gap-[12px] group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg p-1 transition-all"
+            aria-label="Ir para o Dashboard"
+          >
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -108,7 +112,11 @@ export default function DashboardLayout() {
       <div className="flex-1 md:ml-72 flex flex-col min-h-screen relative">
         {/* Mobile Header */}
         <header className="flex h-20 items-center justify-between border-b border-border/40 bg-card/30 backdrop-blur-xl px-6 md:hidden sticky top-0 z-30">
-          <Link to="/dashboard" className="flex items-center gap-3">
+          <Link 
+            to="/dashboard" 
+            className="flex items-center gap-3 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg p-1"
+            aria-label="Ir para o Dashboard"
+          >
             <AnimatedRadarLogo size={32} />
             <span className="text-xl font-black tracking-tighter">ScanRadar</span>
           </Link>
@@ -121,8 +129,15 @@ export default function DashboardLayout() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] p-0 border-r border-border/40">
               <div className="flex h-20 items-center border-b border-border/40 px-8 gap-3">
-                <AnimatedRadarLogo size={32} />
-                <span className="text-xl font-black tracking-tighter">ScanRadar</span>
+                <Link 
+                  to="/dashboard" 
+                  className="flex items-center gap-3 cursor-pointer outline-none"
+                  aria-label="Ir para o Dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <AnimatedRadarLogo size={32} />
+                  <span className="text-xl font-black tracking-tighter">ScanRadar</span>
+                </Link>
               </div>
               <NavContent mobile />
             </SheetContent>
