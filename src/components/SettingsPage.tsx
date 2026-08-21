@@ -83,10 +83,10 @@ export default function Settings() {
   if (isLoading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
       <div className="relative">
-        <Loader2 className="h-14 w-14 text-primary animate-spin" />
-        <Zap className="absolute inset-0 m-auto h-6 w-6 text-primary/50" />
+        <Loader2 className="h-14 w-14 text-blue-600 animate-spin" />
+        <Zap className="absolute inset-0 m-auto h-6 w-6 text-blue-600/50" />
       </div>
-      <p className="text-muted-foreground font-black uppercase tracking-widest animate-pulse">Sincronizando Engine...</p>
+      <p className="text-muted-foreground font-black uppercase tracking-widest text-[10px] animate-pulse">Sincronizando Parâmetros da Engine...</p>
     </div>
   );
 
@@ -97,12 +97,12 @@ export default function Settings() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-4"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#16213B]/5 border border-[#16213B]/10 text-[#16213B] text-[10px] font-black uppercase tracking-[0.2em]">
           <Settings2 className="h-3 w-3" />
           Infraestrutura de Dados
         </div>
-        <h1 className="text-4xl lg:text-5xl font-black tracking-tight leading-none">
-          Configurações da <span className="text-primary">Engine</span>
+        <h1 className="text-4xl lg:text-5xl font-black tracking-tight leading-none text-[#16213B]">
+          Configurações da <span className="text-blue-600">Engine</span>
         </h1>
         <p className="text-lg text-muted-foreground font-medium max-w-2xl">
           Conecte sua engine n8n para gerenciar as automações de extração e processamento de leads.
@@ -116,11 +116,11 @@ export default function Settings() {
           transition={{ delay: 0.1 }}
           className="lg:col-span-2 space-y-8"
         >
-          <Card className="border-none shadow-2xl bg-card/40 backdrop-blur-xl rounded-[2rem] overflow-hidden border border-white/10">
-            <div className="h-1.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
+          <Card className="border-none shadow-[0_32px_64px_-12px_rgba(0,0,0,0.12)] bg-white overflow-hidden rounded-[2.5rem]">
+            <div className="h-2 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600" />
             <CardHeader className="p-8 pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-primary/10 text-primary">
+                <div className="p-3 rounded-2xl bg-[#16213B]/5 text-[#16213B]">
                   <Activity className="h-6 w-6" />
                 </div>
                 <div>
@@ -133,27 +133,27 @@ export default function Settings() {
               <form onSubmit={handleSave} className="space-y-8">
                 <div className="space-y-3">
                   <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
-                    <Zap className="h-3.5 w-3.5 text-primary" /> Identificador da Instância
+                    <Zap className="h-3.5 w-3.5 text-blue-600" /> Identificador da Instância
                   </label>
                   <Input
                     placeholder="Ex: ScanRadar Main Engine"
                     value={integrationName}
                     onChange={(e) => setIntegrationName(e.target.value)}
-                    className="h-16 rounded-2xl bg-muted/20 border-border/50 shadow-inner font-bold px-6 text-lg tracking-tight"
+                    className="h-16 rounded-2xl bg-muted/20 border-none shadow-inner font-bold px-6 text-lg tracking-tight"
                     required
                   />
                 </div>
                 
                 <div className="space-y-3">
                   <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
-                    <Link2 className="h-3.5 w-3.5 text-primary" /> Webhook URL (n8n node)
+                    <Link2 className="h-3.5 w-3.5 text-blue-600" /> Webhook URL (n8n node)
                   </label>
                   <div className="relative group">
                     <Input
                       placeholder="https://n8n.seuservidor.com/webhook/..."
                       value={webhookUrl}
                       onChange={(e) => setWebhookUrl(e.target.value)}
-                      className="h-16 rounded-2xl bg-muted/20 border-border/50 shadow-inner font-bold pl-6 pr-14 text-lg tracking-tight"
+                      className="h-16 rounded-2xl bg-muted/20 border-none shadow-inner font-bold pl-6 pr-14 text-lg tracking-tight"
                       required
                     />
                     <button 
@@ -168,14 +168,14 @@ export default function Settings() {
 
                 <div className="space-y-3">
                   <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
-                    <Key className="h-3.5 w-3.5 text-primary" /> Chave de Segurança (Header)
+                    <Key className="h-3.5 w-3.5 text-blue-600" /> Chave de Segurança (Header)
                   </label>
                   <Input
                     type="password"
                     placeholder={settings?.webhook_secret ? "••••••••••••••••" : "Token X-Webhook-Secret"}
                     value={webhookSecret}
                     onChange={(e) => setWebhookSecret(e.target.value)}
-                    className="h-16 rounded-2xl bg-muted/20 border-border/50 shadow-inner font-bold px-6 text-lg tracking-tight"
+                    className="h-16 rounded-2xl bg-muted/20 border-none shadow-inner font-bold px-6 text-lg tracking-tight"
                   />
                   <p className="text-[10px] text-muted-foreground font-bold px-1 uppercase tracking-tighter">Essa chave será enviada no header da requisição para validar a origem.</p>
                 </div>
@@ -183,7 +183,7 @@ export default function Settings() {
                 <div className="pt-4 flex flex-col sm:flex-row gap-4">
                   <Button 
                     type="submit" 
-                    className="h-16 px-10 rounded-2xl font-black shadow-xl shadow-primary/20 flex-1 hover:scale-[1.01] active:scale-[0.99] transition-all text-lg bg-primary text-primary-foreground" 
+                    className="h-16 px-10 rounded-2xl font-black shadow-xl shadow-blue-600/20 flex-1 hover:scale-[1.01] active:scale-[0.99] transition-all text-lg bg-[#16213B] text-white uppercase tracking-widest text-xs" 
                     disabled={updateMutation.isPending}
                   >
                     {updateMutation.isPending ? (
@@ -198,7 +198,7 @@ export default function Settings() {
                     variant="outline" 
                     onClick={handleTest}
                     disabled={isTesting || !webhookUrl}
-                    className="h-16 px-10 rounded-2xl font-black border-primary/20 flex-1 bg-primary/5 hover:bg-primary/10 text-primary transition-all text-lg"
+                    className="h-16 px-10 rounded-2xl font-black border-blue-600/20 flex-1 bg-blue-600/5 hover:bg-blue-600/10 text-blue-600 transition-all text-lg uppercase tracking-widest text-xs"
                   >
                     {isTesting ? (
                       <div className="flex items-center gap-2">
@@ -255,15 +255,15 @@ export default function Settings() {
             </CardContent>
           </Card>
 
-          <Card className="border-none shadow-xl bg-card/50 backdrop-blur-md rounded-[2.5rem] overflow-hidden border border-border/40">
+          <Card className="border-none shadow-xl bg-white rounded-[2.5rem] overflow-hidden">
             <CardHeader className="p-6 pb-2">
               <div className="flex items-center gap-3">
-                <Shield className="h-5 w-5 text-primary" />
+                <Shield className="h-5 w-5 text-blue-600" />
                 <CardTitle className="text-lg font-black uppercase tracking-tight">Segurança de Dados</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="p-6 pt-4 space-y-4 text-sm font-semibold leading-relaxed text-muted-foreground/80">
-              <p>Os segredos de sua engine são armazenados exclusivamente em ambiente seguro da <span className="text-primary font-black">Lovable Cloud</span>.</p>
+              <p>Os segredos de sua engine são armazenados exclusivamente em ambiente seguro da <span className="text-blue-600 font-black">ScanRadar Cloud</span>.</p>
               <div className="space-y-3 pt-2">
                 {[
                   "Workflow n8n operando",
