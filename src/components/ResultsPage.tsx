@@ -41,10 +41,8 @@ export default function ResultsPage() {
     toast.success("Exportação iniciada!");
   };
 
-  if (isLoading) return <div>Carregando resultados...</div>;
-  if (!data) return <div>Busca não encontrada.</div>;
-
-  const { search, leads } = data;
+  const leads = data?.leads ?? [];
+  const search = data?.search;
 
   const leadsWithClassification = useMemo(() => {
     return leads.map(lead => ({
@@ -55,6 +53,7 @@ export default function ResultsPage() {
 
   const filteredLeads = useMemo(() => {
     let result = [...leadsWithClassification];
+
     
     if (presenceFilter !== "all") {
       result = result.filter(lead => {
@@ -125,6 +124,11 @@ export default function ResultsPage() {
       default: return "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400";
     }
   };
+
+  if (isLoading) return <div>Carregando resultados...</div>;
+  if (!search) return <div>Busca não encontrada.</div>;
+
+
 
   return (
     <div className="space-y-8">
