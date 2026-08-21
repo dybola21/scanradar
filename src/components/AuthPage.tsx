@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Chrome, Mail, Lock, ArrowRight } from "lucide-react";
+import { Chrome, Mail, Lock, ArrowRight, Target, Zap, ShieldCheck } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -55,101 +55,102 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden">
-      {/* Abstract Background Elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[100px]" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[100px]" />
+    <div className="flex min-h-screen items-center justify-center bg-[#F7F9FC] p-4 relative overflow-hidden selection:bg-primary/20 selection:text-primary">
+      {/* Background Orbs */}
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
       
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-md z-10"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary mb-4 shadow-xl shadow-primary/20"
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.2 }}
+            className="inline-flex items-center justify-center p-4 rounded-[2rem] bg-[#16213B] mb-6 shadow-2xl shadow-blue-900/40 relative group"
           >
-            <Target className="h-8 w-8 text-primary-foreground" />
+            <Zap className="h-8 w-8 text-blue-400 fill-blue-400/20 group-hover:scale-110 transition-transform" />
+            <div className="absolute inset-0 rounded-[2rem] border border-blue-400/20 animate-ping opacity-20" />
           </motion.div>
           <motion.h1 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-4xl font-black tracking-tight"
+            transition={{ delay: 0.4 }}
+            className="text-5xl font-black tracking-tighter text-[#16213B]"
           >
-            Maps Leads
+            ScanRadar
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-muted-foreground font-medium mt-2"
+            transition={{ delay: 0.5 }}
+            className="text-muted-foreground font-bold uppercase tracking-[0.2em] text-[10px] mt-2 opacity-60"
           >
-            A inteligência definitiva em geração de leads.
+            Lead Intelligence Engine
           </motion.p>
         </div>
 
-        <Card className="border-none shadow-2xl bg-card/50 backdrop-blur-xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50" />
-          <CardHeader className="space-y-1 pt-8">
-            <CardTitle className="text-2xl font-bold">
-              {isSignUp ? "Criar Conta" : "Bem-vindo"}
+        <Card className="border-none shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] bg-white/80 backdrop-blur-2xl overflow-hidden rounded-[2.5rem] border border-white/20">
+          <div className="h-2 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600" />
+          <CardHeader className="space-y-2 pt-10 px-10 text-center">
+            <CardTitle className="text-3xl font-black tracking-tight text-[#16213B]">
+              {isSignUp ? "Criar Acesso" : "Bem-vindo"}
             </CardTitle>
-            <CardDescription className="font-medium">
+            <CardDescription className="font-bold text-muted-foreground/60 text-sm">
               {isSignUp 
-                ? "Preencha os dados para começar sua jornada" 
-                : "Entre com suas credenciais para acessar o painel"}
+                ? "Configure suas coordenadas de entrada." 
+                : "Acesse sua central de comando agora."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6 pt-2">
-            <form onSubmit={handleAuth} className="space-y-4">
+          <CardContent className="space-y-8 pt-4 px-10">
+            <form onSubmit={handleAuth} className="space-y-5">
               <div className="space-y-4">
                 <div className="relative group">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
                     <Mail className="h-4 w-4" />
                   </div>
                   <Input
                     type="email"
-                    placeholder="Seu melhor e-mail"
+                    placeholder="E-mail operacional"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="pl-10 h-12 bg-muted/30 border-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-xl transition-all font-medium"
+                    className="pl-12 h-14 bg-muted/30 border-none focus-visible:ring-primary/20 rounded-2xl transition-all font-bold"
                   />
                 </div>
                 <div className="relative group">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
                     <Lock className="h-4 w-4" />
                   </div>
                   <Input
                     type="password"
-                    placeholder="Sua senha segura"
+                    placeholder="Chave de segurança"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="pl-10 h-12 bg-muted/30 border-none focus-visible:ring-2 focus-visible:ring-primary/20 rounded-xl transition-all font-medium"
+                    className="pl-12 h-14 bg-muted/30 border-none focus-visible:ring-primary/20 rounded-2xl transition-all font-bold"
                   />
                 </div>
               </div>
               
               <Button 
                 type="submit" 
-                className="w-full h-12 rounded-xl text-base font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group" 
+                className="w-full h-16 rounded-[1.25rem] text-lg font-black shadow-xl shadow-blue-600/20 hover:scale-[1.01] active:scale-[0.98] transition-all group bg-[#16213B] text-white" 
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Processando...
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                    Sincronizando...
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
-                    {isSignUp ? "Criar Minha Conta" : "Entrar no Sistema"}
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="flex items-center gap-3">
+                    {isSignUp ? "Ativar Minha Conta" : "Iniciar Sessão"}
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 )}
               </Button>
@@ -159,49 +160,34 @@ export default function AuthPage() {
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border/50" />
               </div>
-              <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
-                <span className="bg-card px-3 text-muted-foreground/60">Ou continue com</span>
+              <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.3em]">
+                <span className="bg-white px-4 text-muted-foreground/40">Gateway Seguro</span>
               </div>
             </div>
 
             <Button 
               variant="outline" 
-              className="w-full h-12 rounded-xl border-border/50 bg-transparent font-bold hover:bg-muted/50 hover:scale-[1.02] active:scale-[0.98] transition-all" 
+              className="w-full h-14 rounded-2xl border-border/60 bg-transparent font-black text-xs uppercase tracking-widest hover:bg-muted/50 transition-all flex items-center justify-center gap-3" 
               onClick={handleGoogleSignIn}
             >
-              <Chrome className="mr-2 h-5 w-5 text-primary" />
+              <Chrome className="h-4 w-4 text-[#16213B]" />
               Entrar com Google
             </Button>
           </CardContent>
-          <CardFooter className="flex justify-center pb-8 pt-2">
+          <CardFooter className="flex flex-col items-center gap-6 pb-10 pt-2 px-10">
             <button 
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+              className="text-xs font-black text-muted-foreground uppercase tracking-widest hover:text-primary transition-colors"
             >
-              {isSignUp ? "Já tem uma conta? Faça login" : "Não tem uma conta? Crie agora"}
+              {isSignUp ? "Já possuo coordenadas operacionalizadas" : "Não tenho acesso? Solicitar agora"}
             </button>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/5 border border-green-500/10">
+              <ShieldCheck className="h-3 w-3 text-green-600" />
+              <span className="text-[9px] font-black text-green-700 uppercase tracking-tighter">Criptografia de Ponta-a-Ponta Ativa</span>
+            </div>
           </CardFooter>
         </Card>
       </motion.div>
     </div>
-  );
-}
-
-function Target({ className }: { className?: string }) {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2.5" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
-    </svg>
   );
 }

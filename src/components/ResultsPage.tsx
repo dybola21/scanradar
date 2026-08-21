@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, ExternalLink, ArrowLeft, Mail, Phone, Globe, MapPin, Filter, SortAsc, LayoutGrid, List, CheckCircle2, Clock, AlertCircle, Search, Target, Loader2 } from "lucide-react";
+import { Download, ExternalLink, ArrowLeft, Mail, Phone, Globe, MapPin, Filter, SortAsc, LayoutGrid, List, CheckCircle2, Clock, AlertCircle, Search, Target, Loader2, Users } from "lucide-react";
 import { exportToCSV, exportToExcel } from "@/lib/export-utils";
 import { toast } from "sonner";
 import { classifyWebsiteUrl, type WebsiteClassification } from "@/lib/website-utils";
@@ -128,8 +128,8 @@ export default function ResultsPage() {
 
   if (isLoading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-      <Loader2 className="h-12 w-12 text-primary animate-spin" />
-      <p className="text-muted-foreground font-medium animate-pulse">Carregando inteligência de dados...</p>
+      <Loader2 className="h-14 w-14 text-blue-600 animate-spin" />
+      <p className="text-muted-foreground font-black uppercase tracking-widest text-[10px] animate-pulse">Sincronizando Inteligência de Leads...</p>
     </div>
   );
   
@@ -157,8 +157,8 @@ export default function ResultsPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-4xl font-black tracking-tight capitalize bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
-              {search.termo} <span className="text-foreground/40 font-medium lowercase">em</span> {search.cidade}
+            <h1 className="text-4xl font-black tracking-tight capitalize text-[#16213B]">
+              {search.termo} <span className="text-blue-600/40 font-medium lowercase">em</span> {search.cidade}
             </h1>
             <div className="flex items-center gap-3 mt-2">
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/50 text-xs font-bold text-muted-foreground uppercase tracking-widest border border-border/50">
@@ -167,9 +167,9 @@ export default function ResultsPage() {
               </div>
               <Badge 
                 className={cn(
-                  "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border-none",
+                  "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border-none shadow-sm",
                   search.status === "completed" ? "bg-green-500/10 text-green-600" : 
-                  search.status === "processing" ? "bg-primary/10 text-primary animate-pulse" : "bg-destructive/10 text-destructive"
+                  search.status === "processing" ? "bg-blue-600/10 text-blue-600 animate-pulse" : "bg-destructive/10 text-destructive"
                 )}
               >
                 {search.status === "processing" ? "Processando" : 
@@ -184,7 +184,7 @@ export default function ResultsPage() {
             <Button 
               variant="ghost" 
               size="sm" 
-              className={cn("rounded-lg h-9 px-3", viewMode === "table" && "bg-background shadow-sm text-primary")}
+              className={cn("rounded-lg h-9 px-3 font-black text-[10px] uppercase tracking-widest", viewMode === "table" && "bg-white shadow-sm text-blue-600")}
               onClick={() => setViewMode("table")}
             >
               <List className="h-4 w-4 mr-2" /> Tabela
@@ -192,21 +192,21 @@ export default function ResultsPage() {
             <Button 
               variant="ghost" 
               size="sm" 
-              className={cn("rounded-lg h-9 px-3", viewMode === "grid" && "bg-background shadow-sm text-primary")}
+              className={cn("rounded-lg h-9 px-3 font-black text-[10px] uppercase tracking-widest", viewMode === "grid" && "bg-white shadow-sm text-blue-600")}
               onClick={() => setViewMode("grid")}
             >
               <LayoutGrid className="h-4 w-4 mr-2" /> Grid
             </Button>
           </div>
           
-          <Button variant="outline" className="h-11 px-5 rounded-xl font-bold border-border/50 hover:bg-muted/50" onClick={handleExportCSV} disabled={!leads.length}>
+          <Button variant="outline" className="h-11 px-5 rounded-xl font-black text-[10px] uppercase tracking-widest border-border/50 hover:bg-muted/50" onClick={handleExportCSV} disabled={!leads.length}>
             <Download className="mr-2 h-4 w-4" /> CSV
           </Button>
-          <Button variant="outline" className="h-11 px-5 rounded-xl font-bold border-border/50 hover:bg-muted/50" onClick={handleExportExcel} disabled={!leads.length}>
+          <Button variant="outline" className="h-11 px-5 rounded-xl font-black text-[10px] uppercase tracking-widest border-border/50 hover:bg-muted/50" onClick={handleExportExcel} disabled={!leads.length}>
             <Download className="mr-2 h-4 w-4" /> Excel
           </Button>
           {search.sheet_url && (
-            <Button className="h-11 px-6 rounded-xl font-bold shadow-lg shadow-primary/20" asChild>
+            <Button className="h-11 px-6 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-blue-600/20 bg-[#16213B] text-white" asChild>
               <a href={search.sheet_url} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="mr-2 h-4 w-4" /> Planilha
               </a>
@@ -227,7 +227,7 @@ export default function ResultsPage() {
           { label: "Presença Digital (Com Site)", value: stats.withOwn, color: "text-green-500" },
           { label: "Dados Inconclusivos", value: stats.indeterminate, color: "text-amber-500" },
         ].map((s, idx) => (
-          <Card key={idx} className={cn("border-none shadow-xl bg-card/50 backdrop-blur-xl group overflow-hidden relative", s.highlight && "ring-1 ring-orange-500/20")}>
+          <Card key={idx} className={cn("border-none shadow-[0_12px_24px_-10px_rgba(0,0,0,0.1)] bg-white group overflow-hidden relative rounded-[1.5rem]", s.highlight && "ring-2 ring-orange-500/10")}>
             {s.highlight && <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full -mr-8 -mt-8" />}
             <CardHeader className="pb-2">
               <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{s.label}</CardTitle>
@@ -247,7 +247,7 @@ export default function ResultsPage() {
             <Filter className="h-3 w-3" /> Filtrar Presença Digital
           </label>
           <Select value={presenceFilter} onValueChange={setPresenceFilter}>
-            <SelectTrigger className="h-12 rounded-xl bg-card/50 backdrop-blur-md border-none shadow-lg shadow-black/5 font-semibold">
+            <SelectTrigger className="h-12 rounded-xl bg-white border-none shadow-[0_4px_12px_rgba(0,0,0,0.04)] font-black text-[10px] uppercase tracking-widest">
               <SelectValue placeholder="Selecione o filtro..." />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/40 backdrop-blur-2xl">
@@ -258,6 +258,7 @@ export default function ResultsPage() {
               <SelectItem value="instagram">Apenas Instagram</SelectItem>
               <SelectItem value="bio">Links de Bio (Linktree, etc)</SelectItem>
               <SelectItem value="none">Sem links externos</SelectItem>
+              <SelectItem value="unknown">Dados Desconhecidos</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -266,7 +267,7 @@ export default function ResultsPage() {
             <SortAsc className="h-3 w-3" /> Inteligência de Ordenação
           </label>
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="h-12 rounded-xl bg-card/50 backdrop-blur-md border-none shadow-lg shadow-black/5 font-semibold">
+            <SelectTrigger className="h-12 rounded-xl bg-white border-none shadow-[0_4px_12px_rgba(0,0,0,0.04)] font-black text-[10px] uppercase tracking-widest">
               <SelectValue placeholder="Ordenar por..." />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/40 backdrop-blur-2xl">
@@ -285,7 +286,7 @@ export default function ResultsPage() {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
-            className="rounded-3xl border-none shadow-2xl bg-card/50 backdrop-blur-xl overflow-hidden"
+            className="rounded-[2.5rem] border-none shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] bg-white overflow-hidden"
           >
             <div className="overflow-x-auto">
               <Table>
@@ -309,10 +310,10 @@ export default function ResultsPage() {
                     </TableRow>
                   ) : (
                     filteredLeads.map((lead, idx) => (
-                      <TableRow key={lead.id} className="border-border/20 group hover:bg-primary/5 transition-colors">
+                      <TableRow key={lead.id} className="border-border/10 group hover:bg-blue-600/[0.02] transition-colors">
                         <TableCell className="py-6 px-8">
                           <div className="flex items-center gap-4">
-                            <div className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center font-black text-foreground/40 text-sm group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                            <div className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center font-black text-foreground/40 text-[10px] group-hover:bg-blue-600/10 group-hover:text-blue-600 transition-colors">
                               {idx + 1}
                             </div>
                             <div>
@@ -328,12 +329,12 @@ export default function ResultsPage() {
                           <div className="space-y-1.5">
                             {lead.telefone && (
                               <div className="flex items-center gap-2 font-bold text-sm">
-                                <Phone className="h-3.5 w-3.5 text-primary" />
+                                <Phone className="h-3.5 w-3.5 text-blue-600" />
                                 {lead.telefone}
                               </div>
                             )}
                             {(lead.email || lead.email2) && (
-                              <div className="flex items-center gap-2 font-semibold text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer truncate max-w-[200px]">
+                              <div className="flex items-center gap-2 font-bold text-[10px] text-muted-foreground hover:text-blue-600 transition-colors cursor-pointer truncate max-w-[200px] uppercase tracking-tighter">
                                 <Mail className="h-3.5 w-3.5" />
                                 {lead.email || lead.email2}
                               </div>
@@ -342,7 +343,7 @@ export default function ResultsPage() {
                         </TableCell>
                         <TableCell className="py-6 px-8 text-center">
                           <div className="flex flex-col items-center gap-2">
-                            <Badge variant="outline" className={cn("px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border-none", getBadgeColor(lead.classification.type))}>
+                            <Badge variant="outline" className={cn("px-3 py-1 rounded-lg text-[9px] font-black uppercase border-none shadow-sm", getBadgeColor(lead.classification.type))}>
                               {lead.classification.label}
                             </Badge>
                             <span className={cn("text-[9px] font-black uppercase tracking-widest", lead.classification.hasOwnWebsite ? "text-green-500/60" : "text-orange-500/60")}>
