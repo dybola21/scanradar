@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, ExternalLink, ArrowLeft, Mail, Phone, Globe, MapPin, Filter, SortAsc, LayoutGrid, List, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { Download, ExternalLink, ArrowLeft, Mail, Phone, Globe, MapPin, Filter, SortAsc, LayoutGrid, List, CheckCircle2, Clock, AlertCircle, Search, Target, Loader2 } from "lucide-react";
 import { exportToCSV, exportToExcel } from "@/lib/export-utils";
 import { toast } from "sonner";
 import { classifyWebsiteUrl, type WebsiteClassification } from "@/lib/website-utils";
@@ -430,24 +430,5 @@ export default function ResultsPage() {
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function Loader2({ className }: { className?: string }) {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/>
-    </svg>
   );
 }
