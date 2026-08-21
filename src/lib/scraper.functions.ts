@@ -265,7 +265,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
 
     const { data: searches } = await supabase
       .from("searches")
-      .select("id, total_leads, status, created_at")
+      .select("id, total_leads, status, created_at, termo, cidade, uf")
       .eq("user_id", userId);
 
     const totalSearches = searches?.length || 0;
@@ -286,7 +286,10 @@ export const getDashboardStats = createServerFn({ method: "GET" })
         leadsWithEmail: 0, 
         leadsWithWebsite: 0,
         searchesToday: 0,
-        leadsToday: 0
+        leadsToday: 0,
+        leadsWithoutWebsite: 0,
+        recentSearches: [],
+        priorityOpportunities: []
       };
     }
 
@@ -302,12 +305,30 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       .in("search_id", searchIds)
       .or("website.neq.'',website.not.is.null");
 
+    // Leads without website (Priority Opportunities)
+    const { count: noWebsiteCount } = await supabase
+      .from("leads")
+      .select("*", { count: "exact", head: true })
+      .in("search_id", searchIds)
+      .or("website.eq.'',website.is.null");
+
+    // Get 5 priority opportunities
+    const { data: priorityLeads } = await supabase
+      .from("leads")
+      .select("*")
+      .in("search_id", searchIds)
+      .or("website.eq.'',website.is.null")
+      .limit(5);
+
     return {
       totalSearches,
       totalLeads,
       leadsWithEmail: emailCount || 0,
       leadsWithWebsite: websiteCount || 0,
       searchesToday,
-      leadsToday
+      leadsToday,
+      leadsWithoutWebsite: noWebsiteCount || 0,
+      recentSearches: searches?.slice(0, 5) || [],
+      priorityOpportunities: priorityLeads || []
     };
   });
