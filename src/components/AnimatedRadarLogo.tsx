@@ -8,60 +8,95 @@ interface AnimatedRadarLogoProps {
 export function AnimatedRadarLogo({ className, size = 38 }: AnimatedRadarLogoProps) {
   return (
     <div 
-      className={cn("relative flex items-center justify-center", className)}
+      className={cn("relative flex items-center justify-center overflow-hidden", className)}
       style={{ width: size, height: size }}
     >
       <svg
-        viewBox="0 0 100 100"
+        viewBox="0 0 40 40"
         className="w-full h-full"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Radar Background */}
+        <style>
+          {`
+            @keyframes scanRotate {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+            .radar-sweep {
+              transform-origin: 20px 20px;
+              animation: scanRotate 3s linear infinite;
+            }
+            @media (prefers-reduced-motion: reduce) {
+              .radar-sweep {
+                animation: none;
+              }
+            }
+            @keyframes blipPulse {
+              0% { opacity: 0.3; transform: scale(1); }
+              50% { opacity: 1; transform: scale(1.2); }
+              100% { opacity: 0.3; transform: scale(1); }
+            }
+            .radar-blip {
+              transform-origin: 28px 14px;
+              animation: blipPulse 2s ease-in-out infinite;
+            }
+          `}
+        </style>
+        
+        {/* Radar Background - Navy Blue (#172033) */}
         <circle 
-          cx="50" 
-          cy="50" 
-          r="48" 
-          fill="oklch(var(--card))" 
-          className="stroke-[0.5] stroke-border"
+          cx="20" 
+          cy="20" 
+          r="19" 
+          fill="#172033" 
         />
         
-        {/* Concentric Circles */}
-        <circle cx="50" cy="50" r="15" fill="none" stroke="oklch(var(--primary)/0.2)" strokeWidth="1" />
-        <circle cx="50" cy="50" r="30" fill="none" stroke="oklch(var(--primary)/0.2)" strokeWidth="1" />
-        <circle cx="50" cy="50" r="45" fill="none" stroke="oklch(var(--primary)/0.2)" strokeWidth="1" />
+        {/* Concentric Circles - Light blue/white with opacity */}
+        <circle cx="20" cy="20" r="6" fill="none" stroke="rgba(255, 255, 255, 0.6)" strokeWidth="1.2" />
+        <circle cx="20" cy="20" r="12" fill="none" stroke="rgba(255, 255, 255, 0.6)" strokeWidth="1.2" />
+        <circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255, 255, 255, 0.6)" strokeWidth="1.2" />
         
         {/* Crosshair lines */}
-        <line x1="50" y1="5" x2="50" y2="95" stroke="oklch(var(--primary)/0.1)" strokeWidth="0.5" />
-        <line x1="5" y1="50" x2="95" y2="50" stroke="oklch(var(--primary)/0.1)" strokeWidth="0.5" />
+        <line x1="20" y1="2" x2="20" y2="38" stroke="rgba(255, 255, 255, 0.4)" strokeWidth="1" />
+        <line x1="2" y1="20" x2="38" y2="20" stroke="rgba(255, 255, 255, 0.4)" strokeWidth="1" />
 
-        {/* Detected Point (Blip) */}
-        <circle cx="70" cy="35" r="2.5" fill="oklch(var(--primary))">
-          <animate
-            attributeName="opacity"
-            values="0.2;1;0.2"
-            dur="2s"
-            repeatCount="indefinite"
-          />
-        </circle>
-
-        {/* Scanning Sweep */}
-        <g className="origin-center animate-[spin_3s_linear_infinite] motion-reduce:animate-none">
+        {/* Scanning Sweep Group (Beam + Sector) */}
+        <g className="radar-sweep">
+          {/* Translucent Sector */}
           <path
-            d="M 50 50 L 50 2 A 48 48 0 0 1 95.8 35.8 Z"
-            fill="url(#radarGradient)"
-            opacity="0.6"
+            d="M 20 20 L 20 2 A 18 18 0 0 1 32.7 7.3 Z"
+            fill="url(#radarSweepGradient)"
+            opacity="0.8"
           />
-          <line x1="50" y1="50" x2="50" y2="5" stroke="oklch(var(--primary))" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Main Beam - Cyan (#38BDF8) */}
+          <line 
+            x1="20" 
+            y1="20" 
+            x2="20" 
+            y2="2" 
+            stroke="#38BDF8" 
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+          />
         </g>
 
+        {/* Detected Point (Blip) - Green (#22C55E) */}
+        <circle 
+          cx="28" 
+          cy="14" 
+          r="1.8" 
+          fill="#22C55E" 
+          className="radar-blip"
+        />
+
         {/* Center Point */}
-        <circle cx="50" cy="50" r="2" fill="oklch(var(--primary))" />
+        <circle cx="20" cy="20" r="1.5" fill="#38BDF8" />
 
         <defs>
-          <linearGradient id="radarGradient" x1="50%" y1="100%" x2="100%" y2="50%">
-            <stop offset="0%" stopColor="oklch(var(--primary))" stopOpacity="0" />
-            <stop offset="100%" stopColor="oklch(var(--primary))" stopOpacity="0.5" />
+          <linearGradient id="radarSweepGradient" x1="20" y1="20" x2="32.7" y2="7.3" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#38BDF8" stopOpacity="0" />
+            <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.4" />
           </linearGradient>
         </defs>
       </svg>
