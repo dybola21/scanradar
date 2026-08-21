@@ -1,5 +1,6 @@
 import { Outlet, Link, useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, Search, History, Settings, LogOut, Menu, User, Shield } from "lucide-react";
+import { AnimatedRadarLogo } from "./AnimatedRadarLogo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
@@ -87,18 +88,18 @@ export default function DashboardLayout() {
       {/* Desktop Sidebar */}
       <aside className="hidden w-72 border-r border-border/40 bg-card/30 backdrop-blur-xl md:block fixed h-full z-20">
         <div className="flex h-20 items-center px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3"
-          >
-            <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Target className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
-              Maps Leads
-            </span>
-          </motion.div>
+          <Link to="/dashboard" className="flex items-center gap-3">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-[12px]"
+            >
+              <AnimatedRadarLogo size={38} />
+              <span className="text-2xl font-black tracking-tighter text-foreground whitespace-nowrap">
+                ScanRadar
+              </span>
+            </motion.div>
+          </Link>
         </div>
         <NavContent />
       </aside>
@@ -107,12 +108,10 @@ export default function DashboardLayout() {
       <div className="flex-1 md:ml-72 flex flex-col min-h-screen relative">
         {/* Mobile Header */}
         <header className="flex h-20 items-center justify-between border-b border-border/40 bg-card/30 backdrop-blur-xl px-6 md:hidden sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <Target className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-black tracking-tighter">Maps Leads</span>
-          </div>
+          <Link to="/dashboard" className="flex items-center gap-3">
+            <AnimatedRadarLogo size={32} />
+            <span className="text-xl font-black tracking-tighter">ScanRadar</span>
+          </Link>
           
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -121,8 +120,9 @@ export default function DashboardLayout() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] p-0 border-r border-border/40">
-              <div className="flex h-20 items-center border-b border-border/40 px-8">
-                <span className="text-xl font-black tracking-tighter">Maps Leads</span>
+              <div className="flex h-20 items-center border-b border-border/40 px-8 gap-3">
+                <AnimatedRadarLogo size={32} />
+                <span className="text-xl font-black tracking-tighter">ScanRadar</span>
               </div>
               <NavContent mobile />
             </SheetContent>
