@@ -87,19 +87,19 @@ export default function DashboardLayout() {
     <div className="flex min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
       {/* Desktop Sidebar */}
       <aside className="hidden w-72 border-r border-border/40 bg-card/30 backdrop-blur-xl md:block fixed h-full z-20">
-        <div className="flex h-20 items-center px-8">
+        <div className="flex h-20 items-center px-6">
           <Link 
             to="/dashboard" 
-            className="flex items-center gap-[12px] group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg p-1 transition-all"
+            className="flex items-center gap-[10px] min-h-[44px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg transition-all"
             aria-label="Ir para o Dashboard"
           >
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-[12px]"
+              className="flex items-center gap-[10px] shrink-0"
             >
-              <AnimatedRadarLogo size={38} />
-              <span className="text-2xl font-black tracking-tighter text-foreground whitespace-nowrap">
+              <AnimatedRadarLogo size={34} />
+              <span className="text-[20px] font-[750] tracking-[-0.02em] leading-none text-foreground whitespace-nowrap translate-y-[-1px] m-0 p-0">
                 ScanRadar
               </span>
             </motion.div>
@@ -114,11 +114,13 @@ export default function DashboardLayout() {
         <header className="flex h-20 items-center justify-between border-b border-border/40 bg-card/30 backdrop-blur-xl px-6 md:hidden sticky top-0 z-30">
           <Link 
             to="/dashboard" 
-            className="flex items-center gap-3 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg p-1"
+            className="flex items-center gap-[10px] min-h-[44px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg transition-all"
             aria-label="Ir para o Dashboard"
           >
-            <AnimatedRadarLogo size={32} />
-            <span className="text-xl font-black tracking-tighter">ScanRadar</span>
+            <AnimatedRadarLogo size={34} />
+            <span className="text-[20px] font-[750] tracking-[-0.02em] leading-none text-foreground whitespace-nowrap translate-y-[-1px] m-0 p-0">
+              ScanRadar
+            </span>
           </Link>
           
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -131,12 +133,14 @@ export default function DashboardLayout() {
               <div className="flex h-20 items-center border-b border-border/40 px-8 gap-3">
                 <Link 
                   to="/dashboard" 
-                  className="flex items-center gap-3 cursor-pointer outline-none"
+                  className="flex items-center gap-[10px] min-h-[44px] cursor-pointer outline-none"
                   aria-label="Ir para o Dashboard"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <AnimatedRadarLogo size={32} />
-                  <span className="text-xl font-black tracking-tighter">ScanRadar</span>
+                  <AnimatedRadarLogo size={34} />
+                  <span className="text-[20px] font-[750] tracking-[-0.02em] leading-none text-foreground whitespace-nowrap translate-y-[-1px] m-0 p-0">
+                    ScanRadar
+                  </span>
                 </Link>
               </div>
               <NavContent mobile />

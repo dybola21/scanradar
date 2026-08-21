@@ -5,15 +5,15 @@ interface AnimatedRadarLogoProps {
   size?: number;
 }
 
-export function AnimatedRadarLogo({ className, size = 38 }: AnimatedRadarLogoProps) {
+export function AnimatedRadarLogo({ className, size = 34 }: AnimatedRadarLogoProps) {
   return (
     <div 
-      className={cn("relative flex items-center justify-center overflow-hidden", className)}
+      className={cn("flex items-center justify-center shrink-0", className)}
       style={{ width: size, height: size }}
     >
       <svg
         viewBox="0 0 40 40"
-        className="w-full h-full"
+        className="w-full h-full block"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
       >
