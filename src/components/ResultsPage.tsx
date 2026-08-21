@@ -125,6 +125,11 @@ export default function ResultsPage() {
     }
   };
 
+  if (isLoading) return <div>Carregando resultados...</div>;
+  if (!search) return <div>Busca não encontrada.</div>;
+
+
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
