@@ -6,13 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, ExternalLink, ArrowLeft, Mail, Phone, Globe, MapPin, Filter, SortAsc } from "lucide-react";
+import { Download, ExternalLink, ArrowLeft, Mail, Phone, Globe, MapPin, Filter, SortAsc, LayoutGrid, List, CheckCircle2, Clock, AlertCircle, Search, Target, Loader2 } from "lucide-react";
 import { exportToCSV, exportToExcel } from "@/lib/export-utils";
 import { toast } from "sonner";
 import { classifyWebsiteUrl, type WebsiteClassification } from "@/lib/website-utils";
 import { useState, useMemo } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ResultsPage() {
   const { searchId } = useParams({ from: "/_authenticated/results/$searchId" });
@@ -20,6 +21,7 @@ export default function ResultsPage() {
   
   const [presenceFilter, setPresenceFilter] = useState("all");
   const [sortBy, setSortBy] = useState("opportunity");
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
   const { data, isLoading } = useQuery({
     queryKey: ["search-details", searchId],
@@ -32,13 +34,13 @@ export default function ResultsPage() {
   const handleExportCSV = () => {
     if (!data?.leads) return;
     exportToCSV(data.leads, `leads-${data.search.termo}-${data.search.cidade}.csv`);
-    toast.success("Exportação iniciada!");
+    toast.success("Exportação CSV iniciada!");
   };
 
   const handleExportExcel = () => {
     if (!data?.leads) return;
     exportToExcel(data.leads, `leads-${data.search.termo}-${data.search.cidade}.xlsx`);
-    toast.success("Exportação iniciada!");
+    toast.success("Exportação Excel iniciada!");
   };
 
   const leads = data?.leads ?? [];
@@ -54,7 +56,6 @@ export default function ResultsPage() {
   const filteredLeads = useMemo(() => {
     let result = [...leadsWithClassification];
 
-    
     if (presenceFilter !== "all") {
       result = result.filter(lead => {
         const c = lead.classification;
@@ -115,236 +116,319 @@ export default function ResultsPage() {
 
   const getBadgeColor = (type: WebsiteClassification["type"]) => {
     switch (type) {
-      case "own_website": return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400";
-      case "whatsapp": return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400";
-      case "instagram": return "bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-400";
-      case "no_link": return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-400";
+      case "own_website": return "bg-green-500/10 text-green-600 border-green-500/20";
+      case "whatsapp": return "bg-emerald-500/10 text-emerald-600 border-emerald-500/20";
+      case "instagram": return "bg-pink-500/10 text-pink-600 border-pink-500/20";
+      case "no_link": return "bg-slate-500/10 text-slate-600 border-slate-500/20";
       case "url_shortener":
-      case "unknown": return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400";
-      default: return "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400";
+      case "unknown": return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+      default: return "bg-blue-500/10 text-blue-600 border-blue-500/20";
     }
   };
 
-  if (isLoading) return <div>Carregando resultados...</div>;
-  if (!search) return <div>Busca não encontrada.</div>;
-
-
+  if (isLoading) return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+      <Loader2 className="h-12 w-12 text-primary animate-spin" />
+      <p className="text-muted-foreground font-medium animate-pulse">Carregando inteligência de dados...</p>
+    </div>
+  );
+  
+  if (!search) return (
+    <div className="text-center py-20 space-y-4">
+      <AlertCircle className="h-16 w-16 text-destructive mx-auto" />
+      <h2 className="text-2xl font-bold">Busca não encontrada</h2>
+      <Button asChild>
+        <Link to="/history">Voltar ao histórico</Link>
+      </Button>
+    </div>
+  );
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
+    <div className="space-y-10 max-w-[1600px] mx-auto pb-20">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+      >
+        <div className="flex items-center gap-5">
+          <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-muted/50 hover:bg-muted" asChild>
             <Link to="/history">
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-6 w-6" />
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold capitalize">{search.termo} em {search.cidade}</h1>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <span>{new Date(search.created_at).toLocaleString()}</span>
-              <Badge variant={search.status === "completed" ? "default" : "secondary"}>
-                {search.status === "processing" ? "Em processamento" : 
-                 search.status === "completed" ? "Concluído" : "Falhou"}
+            <h1 className="text-4xl font-black tracking-tight capitalize bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60">
+              {search.termo} <span className="text-foreground/40 font-medium lowercase">em</span> {search.cidade}
+            </h1>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/50 text-xs font-bold text-muted-foreground uppercase tracking-widest border border-border/50">
+                <Clock className="h-3 w-3" />
+                {new Date(search.created_at).toLocaleDateString()}
+              </div>
+              <Badge 
+                className={cn(
+                  "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border-none",
+                  search.status === "completed" ? "bg-green-500/10 text-green-600" : 
+                  search.status === "processing" ? "bg-primary/10 text-primary animate-pulse" : "bg-destructive/10 text-destructive"
+                )}
+              >
+                {search.status === "processing" ? "Processando" : 
+                 search.status === "completed" ? "Finalizado" : "Erro"}
               </Badge>
             </div>
           </div>
         </div>
         
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleExportCSV} disabled={!leads.length}>
-            <Download className="mr-2 h-4 w-4" />
-            CSV
+        <div className="flex flex-wrap gap-3">
+          <div className="flex bg-muted/50 p-1 rounded-xl border border-border/50">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={cn("rounded-lg h-9 px-3", viewMode === "table" && "bg-background shadow-sm text-primary")}
+              onClick={() => setViewMode("table")}
+            >
+              <List className="h-4 w-4 mr-2" /> Tabela
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={cn("rounded-lg h-9 px-3", viewMode === "grid" && "bg-background shadow-sm text-primary")}
+              onClick={() => setViewMode("grid")}
+            >
+              <LayoutGrid className="h-4 w-4 mr-2" /> Grid
+            </Button>
+          </div>
+          
+          <Button variant="outline" className="h-11 px-5 rounded-xl font-bold border-border/50 hover:bg-muted/50" onClick={handleExportCSV} disabled={!leads.length}>
+            <Download className="mr-2 h-4 w-4" /> CSV
           </Button>
-          <Button variant="outline" onClick={handleExportExcel} disabled={!leads.length}>
-            <Download className="mr-2 h-4 w-4" />
-            Excel
+          <Button variant="outline" className="h-11 px-5 rounded-xl font-bold border-border/50 hover:bg-muted/50" onClick={handleExportExcel} disabled={!leads.length}>
+            <Download className="mr-2 h-4 w-4" /> Excel
           </Button>
           {search.sheet_url && (
-            <Button asChild>
+            <Button className="h-11 px-6 rounded-xl font-bold shadow-lg shadow-primary/20" asChild>
               <a href={search.sheet_url} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Planilha Google
+                <ExternalLink className="mr-2 h-4 w-4" /> Planilha
               </a>
             </Button>
           )}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Leads Encontrados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Sem Site Próprio</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.noOwn}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Com Site Próprio</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.withOwn}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Indeterminados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.indeterminate}</div>
-          </CardContent>
-        </Card>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1 }}
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {[
+          { label: "Total Extraído", value: stats.total, color: "text-foreground" },
+          { label: "Oportunidade (Sem Site)", value: stats.noOwn, color: "text-orange-500", highlight: true },
+          { label: "Presença Digital (Com Site)", value: stats.withOwn, color: "text-green-500" },
+          { label: "Dados Inconclusivos", value: stats.indeterminate, color: "text-amber-500" },
+        ].map((s, idx) => (
+          <Card key={idx} className={cn("border-none shadow-xl bg-card/50 backdrop-blur-xl group overflow-hidden relative", s.highlight && "ring-1 ring-orange-500/20")}>
+            {s.highlight && <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full -mr-8 -mt-8" />}
+            <CardHeader className="pb-2">
+              <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{s.label}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={cn("text-4xl font-black transition-transform group-hover:scale-105 duration-300", s.color)}>
+                {s.value}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </motion.div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-end">
-        <div className="w-full md:w-64 space-y-2">
-          <label className="text-sm font-medium flex items-center gap-2">
-            <Filter className="h-4 w-4" /> Presença digital
+      <div className="flex flex-col md:flex-row gap-6 items-end">
+        <div className="w-full md:w-80 space-y-3">
+          <label className="text-xs font-black uppercase tracking-[0.1em] text-muted-foreground ml-1 flex items-center gap-2">
+            <Filter className="h-3 w-3" /> Filtrar Presença Digital
           </label>
           <Select value={presenceFilter} onValueChange={setPresenceFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por..." />
+            <SelectTrigger className="h-12 rounded-xl bg-card/50 backdrop-blur-md border-none shadow-lg shadow-black/5 font-semibold">
+              <SelectValue placeholder="Selecione o filtro..." />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="no_own_site">Sem site próprio</SelectItem>
-              <SelectItem value="with_own_site">Com site próprio</SelectItem>
-              <SelectItem value="whatsapp">WhatsApp</SelectItem>
-              <SelectItem value="instagram">Instagram</SelectItem>
-              <SelectItem value="social">Outras redes sociais</SelectItem>
-              <SelectItem value="bio">Link de bio</SelectItem>
-              <SelectItem value="platform">Página em plataforma</SelectItem>
-              <SelectItem value="shortener">Link encurtado</SelectItem>
-              <SelectItem value="none">Sem link</SelectItem>
-              <SelectItem value="unknown">Não identificado</SelectItem>
+            <SelectContent className="rounded-xl border-border/40 backdrop-blur-2xl">
+              <SelectItem value="all">Todos os Leads</SelectItem>
+              <SelectItem value="no_own_site">Sem Site Próprio (Foco)</SelectItem>
+              <SelectItem value="with_own_site">Com Site Próprio</SelectItem>
+              <SelectItem value="whatsapp">Apenas WhatsApp</SelectItem>
+              <SelectItem value="instagram">Apenas Instagram</SelectItem>
+              <SelectItem value="bio">Links de Bio (Linktree, etc)</SelectItem>
+              <SelectItem value="none">Sem links externos</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <div className="w-full md:w-64 space-y-2">
-          <label className="text-sm font-medium flex items-center gap-2">
-            <SortAsc className="h-4 w-4" /> Ordenação
+        <div className="w-full md:w-80 space-y-3">
+          <label className="text-xs font-black uppercase tracking-[0.1em] text-muted-foreground ml-1 flex items-center gap-2">
+            <SortAsc className="h-3 w-3" /> Inteligência de Ordenação
           </label>
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger>
+            <SelectTrigger className="h-12 rounded-xl bg-card/50 backdrop-blur-md border-none shadow-lg shadow-black/5 font-semibold">
               <SelectValue placeholder="Ordenar por..." />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="opportunity">Melhores oportunidades</SelectItem>
-              <SelectItem value="site">Com site próprio</SelectItem>
-              <SelectItem value="name">Nome da empresa</SelectItem>
+            <SelectContent className="rounded-xl border-border/40 backdrop-blur-2xl">
+              <SelectItem value="opportunity">Melhores Oportunidades</SelectItem>
+              <SelectItem value="name">Alfabética (Empresa)</SelectItem>
+              <SelectItem value="site">Status Digital</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Leads Encontrados</CardTitle>
-          <CardDescription>Lista detalhada de empresas e contatos.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border overflow-x-auto">
-            <Table>
-              <TableHeader className="hidden md:table-header-group">
-                <TableRow>
-                  <TableHead className="min-w-[200px]">Empresa</TableHead>
-                  <TableHead>Contato</TableHead>
-                  <TableHead>Localização</TableHead>
-                  <TableHead>Website / Presença Digital</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLeads.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                      {search.status === "processing" ? "Buscando leads..." : "Nenhum lead encontrado com estes filtros."}
-                    </TableCell>
+      <AnimatePresence mode="wait">
+        {viewMode === "table" ? (
+          <motion.div
+            key="table-view"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="rounded-3xl border-none shadow-2xl bg-card/50 backdrop-blur-xl overflow-hidden"
+          >
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/40 hover:bg-transparent">
+                    <TableHead className="text-xs font-black uppercase tracking-widest py-6 px-8">Empresa</TableHead>
+                    <TableHead className="text-xs font-black uppercase tracking-widest py-6 px-8">Contato Estratégico</TableHead>
+                    <TableHead className="text-xs font-black uppercase tracking-widest py-6 px-8 text-center">Status Digital</TableHead>
+                    <TableHead className="text-xs font-black uppercase tracking-widest py-6 px-8 text-right">Ações</TableHead>
                   </TableRow>
-                ) : (
-                  filteredLeads.map((lead) => (
-                    <TableRow key={lead.id} className="flex flex-col md:table-row p-4 md:p-0 border-b md:border-b-0 space-y-3 md:space-y-0">
-                      <TableCell className="font-medium p-0 md:p-4 text-lg md:text-base">
-                        <span className="md:hidden text-xs text-muted-foreground block mb-1">Empresa</span>
-                        {lead.nome}
-                      </TableCell>
-                      <TableCell className="p-0 md:p-4">
-                        <span className="md:hidden text-xs text-muted-foreground block mb-1">Contato</span>
-                        <div className="space-y-1">
-                          {lead.telefone && (
-                            <div className="flex items-center text-sm gap-1">
-                              <Phone className="h-3 w-3" />
-                              {lead.telefone}
-                            </div>
-                          )}
-                          {(lead.email || lead.email2) && (
-                            <div className="flex items-center text-sm gap-1 text-primary break-all">
-                              <Mail className="h-3 w-3" />
-                              {lead.email || lead.email2}
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="p-0 md:p-4">
-                        <span className="md:hidden text-xs text-muted-foreground block mb-1">Localização</span>
-                        <div className="flex items-center text-sm gap-1">
-                          <MapPin className="h-3 w-3 text-muted-foreground" />
-                          {lead.bairro ? `${lead.bairro}, ` : ""}{lead.cidade} - {lead.uf}
-                        </div>
-                      </TableCell>
-                      <TableCell className="p-0 md:p-4">
-                        <span className="md:hidden text-xs text-muted-foreground block mb-1">Website / Presença Digital</span>
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <Badge className={cn("px-2 py-0.5", getBadgeColor(lead.classification.type))}>
-                              {lead.classification.label}
-                            </Badge>
-                            {lead.classification.normalizedUrl && (
-                              <a 
-                                href={lead.classification.normalizedUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-primary hover:text-primary/80 transition-colors"
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                              </a>
-                            )}
-                          </div>
-                          <div className="text-[10px] uppercase font-bold tracking-tight">
-                            {lead.classification.hasOwnWebsite === true && (
-                              <span className="text-green-600 dark:text-green-400">Site próprio: Sim</span>
-                            )}
-                            {lead.classification.hasOwnWebsite === false && (
-                              <span className="text-red-600 dark:text-red-400">Site próprio: Não</span>
-                            )}
-                            {lead.classification.hasOwnWebsite === null && (
-                              <span className="text-yellow-600 dark:text-yellow-400">Site próprio: Indeterminado</span>
-                            )}
-                          </div>
-                          {lead.classification.hostname && (
-                            <div className="text-[10px] text-muted-foreground truncate max-w-[150px]">
-                              {lead.classification.hostname}
-                            </div>
-                          )}
+                </TableHeader>
+                <TableBody>
+                  {filteredLeads.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-24">
+                        <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                          <Search className="h-12 w-12 opacity-20" />
+                          <p className="font-bold">Nenhum lead encontrado com estes filtros.</p>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+                  ) : (
+                    filteredLeads.map((lead, idx) => (
+                      <TableRow key={lead.id} className="border-border/20 group hover:bg-primary/5 transition-colors">
+                        <TableCell className="py-6 px-8">
+                          <div className="flex items-center gap-4">
+                            <div className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center font-black text-foreground/40 text-sm group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                              {idx + 1}
+                            </div>
+                            <div>
+                              <p className="font-bold text-lg leading-tight">{lead.nome}</p>
+                              <div className="flex items-center gap-1.5 mt-1 text-muted-foreground font-medium text-sm">
+                                <MapPin className="h-3 w-3" />
+                                {lead.cidade}, {lead.uf}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-6 px-8">
+                          <div className="space-y-1.5">
+                            {lead.telefone && (
+                              <div className="flex items-center gap-2 font-bold text-sm">
+                                <Phone className="h-3.5 w-3.5 text-primary" />
+                                {lead.telefone}
+                              </div>
+                            )}
+                            {(lead.email || lead.email2) && (
+                              <div className="flex items-center gap-2 font-semibold text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer truncate max-w-[200px]">
+                                <Mail className="h-3.5 w-3.5" />
+                                {lead.email || lead.email2}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-6 px-8 text-center">
+                          <div className="flex flex-col items-center gap-2">
+                            <Badge variant="outline" className={cn("px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border-none", getBadgeColor(lead.classification.type))}>
+                              {lead.classification.label}
+                            </Badge>
+                            <span className={cn("text-[9px] font-black uppercase tracking-widest", lead.classification.hasOwnWebsite ? "text-green-500/60" : "text-orange-500/60")}>
+                              {lead.classification.hasOwnWebsite ? "Site Próprio" : "Sem Site"}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-6 px-8 text-right">
+                          <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {lead.classification.normalizedUrl && (
+                              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary" asChild>
+                                <a href={lead.classification.normalizedUrl} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="h-5 w-5" />
+                                </a>
+                              </Button>
+                            )}
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary">
+                              <Target className="h-5 w-5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="grid-view"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+          >
+            {filteredLeads.map((lead) => (
+              <Card key={lead.id} className="border-none shadow-xl bg-card/50 backdrop-blur-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group overflow-hidden">
+                <div className={cn("h-1.5 w-full", lead.classification.hasOwnWebsite ? "bg-green-500" : "bg-orange-500")} />
+                <CardHeader className="pb-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-xl font-bold leading-tight group-hover:text-primary transition-colors">{lead.nome}</CardTitle>
+                      <CardDescription className="flex items-center gap-1.5 mt-1 font-semibold">
+                        <MapPin className="h-3 w-3" /> {lead.cidade} - {lead.uf}
+                      </CardDescription>
+                    </div>
+                    <Badge variant="outline" className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-tighter border-none shrink-0", getBadgeColor(lead.classification.type))}>
+                      {lead.classification.label}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-3">
+                    {lead.telefone && (
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/20 group-hover:bg-primary/5 transition-colors">
+                        <Phone className="h-4 w-4 text-primary" />
+                        <span className="font-bold text-sm tracking-tighter">{lead.telefone}</span>
+                      </div>
+                    )}
+                    {(lead.email || lead.email2) && (
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/20 group-hover:bg-primary/5 transition-colors">
+                        <Mail className="h-4 w-4 text-primary" />
+                        <span className="font-bold text-xs truncate">{lead.email || lead.email2}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="pt-2 flex gap-3">
+                    {lead.classification.normalizedUrl && (
+                      <Button className="flex-1 rounded-xl h-11 font-bold shadow-sm" asChild>
+                        <a href={lead.classification.normalizedUrl} target="_blank" rel="noopener noreferrer">
+                          Acessar Link
+                        </a>
+                      </Button>
+                    )}
+                    <Button variant="outline" className="flex-1 rounded-xl h-11 font-bold border-border/50">
+                      Prospectar
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
